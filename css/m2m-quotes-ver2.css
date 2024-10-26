@@ -113,3 +113,14 @@
 .wrap form .button-primary:hover {
     background-color: #005bb5;
 }
+.tab-content {
+    display: none;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-top: -1px;
+}
+
+.nav-tab-active {
+    background-color: #f1f1f1 !important;
+}
