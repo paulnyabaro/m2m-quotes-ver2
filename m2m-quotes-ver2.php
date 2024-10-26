@@ -2,7 +2,7 @@
 /**
  * Plugin Name: M2M Quotes Ver2
  * Description: Display quotes that change every 24 hours, with analytics for likes and dislikes, customizable links, and sharing options.
- * Version: 2.1
+ * Version: 2.2
  * Author: Mind To Matter
  */
 
