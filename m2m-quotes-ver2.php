@@ -156,3 +156,43 @@ function m2m_quotes_ver2_custom_button_callback($args) {
     $value = get_option($args['label_for']);
     echo '<input type="text" id="' . $args['label_for'] . '" name="' . $args['label_for'] . '" value="' . esc_attr($value) . '" />';
 }
+
+// Add custom columns to Quotes list in the admin
+function m2m_quotes_ver2_add_custom_columns($columns) {
+    $columns['likes'] = 'Likes';
+    $columns['dislikes'] = 'Dislikes';
+    return $columns;
+}
+add_filter('manage_m2m_quotes_posts_columns', 'm2m_quotes_ver2_add_custom_columns');
+
+// Display custom column content
+function m2m_quotes_ver2_custom_column_content($column, $post_id) {
+    if ($column == 'likes') {
+        echo get_post_meta($post_id, '_m2m_quote_likes', true) ?: '0';
+    } elseif ($column == 'dislikes') {
+        echo get_post_meta($post_id, '_m2m_quote_dislikes', true) ?: '0';
+    }
+}
+add_action('manage_m2m_quotes_posts_custom_column', 'm2m_quotes_ver2_custom_column_content', 10, 2);
+
+// Make Likes and Dislikes columns sortable
+function m2m_quotes_ver2_sortable_columns($columns) {
+    $columns['likes'] = 'likes';
+    $columns['dislikes'] = 'dislikes';
+    return $columns;
+}
+add_filter('manage_edit-m2m_quotes_sortable_columns', 'm2m_quotes_ver2_sortable_columns');
+
+
+// Add a meta box to show quote performance on the edit quote page
+function m2m_quotes_ver2_add_performance_meta_box() {
+    add_meta_box('m2m_quotes_performance', 'Quote Performance', 'm2m_quotes_ver2_performance_meta_box_callback', 'm2m_quotes', 'side', 'default');
+}
+add_action('add_meta_boxes', 'm2m_quotes_ver2_add_performance_meta_box');
+
+function m2m_quotes_ver2_performance_meta_box_callback($post) {
+    $likes = get_post_meta($post->ID, '_m2m_quote_likes', true) ?: 0;
+    $dislikes = get_post_meta($post->ID, '_m2m_quote_dislikes', true) ?: 0;
+    echo '<p><strong>Likes:</strong> ' . esc_html($likes) . '</p>';
+    echo '<p><strong>Dislikes:</strong> ' . esc_html($dislikes) . '</p>';
+}
