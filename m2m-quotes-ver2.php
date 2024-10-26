@@ -125,9 +125,40 @@ add_action('wp_ajax_nopriv_m2m_quotes_ver2_like_dislike', 'm2m_quotes_ver2_like_
 
 // Admin Settings Page
 function m2m_quotes_ver2_admin_menu() {
-    add_menu_page('M2M Quotes Ver2 Settings', 'M2M Quotes Ver2', 'manage_options', 'm2m-quotes-ver2', 'm2m_quotes_ver2_settings_page', 'dashicons-admin-generic', 20);
+    add_menu_page('M2M Quotes Ver2 Settings', 'M2M Quotes Ver2', 'manage_options', 'm2m-quotes-ver2', 'm2m_quotes_ver2_settings_page', 'dashicons-admin-generic', 'M2M Quotes Performance',
+        'M2M Quotes Ver2',
+        'manage_options',
+        'm2m-quotes-ver2',
+        'm2m_quotes_ver2_admin_page',
+        'dashicons-chart-bar', 20);
 }
 add_action('admin_menu', 'm2m_quotes_ver2_admin_menu');
+
+
+function m2m_quotes_ver2_admin_page() {
+    ?>
+    <div class="wrap">
+        <h1>M2M Quotes Ver2 - Settings & Performance</h1>
+        <h2 class="nav-tab-wrapper">
+            <a href="#tab-performance" class="nav-tab nav-tab-active" data-tab="performance">Quote Performance</a>
+            <a href="#tab-settings" class="nav-tab" data-tab="settings">Quote Settings</a>
+            <a href="#tab-buttons" class="nav-tab" data-tab="buttons">Button URLs</a>
+        </h2>
+
+        <div id="tab-performance" class="tab-content">
+            <?php m2m_quotes_ver2_display_quote_performance(); ?>
+        </div>
+        
+        <div id="tab-settings" class="tab-content" style="display:none;">
+            <?php m2m_quotes_ver2_display_settings(); ?>
+        </div>
+
+        <div id="tab-buttons" class="tab-content" style="display:none;">
+            <?php m2m_quotes_ver2_display_button_urls(); ?>
+        </div>
+    </div>
+    <?php
+}
 
 function m2m_quotes_ver2_settings_page() {
     ?>
@@ -143,6 +174,13 @@ function m2m_quotes_ver2_settings_page() {
     </div>
     <?php
 }
+
+// Enqueue CSS and JavaScript for tabs in the admin
+function m2m_quotes_ver2_admin_assets() {
+    wp_enqueue_style('m2m-quotes-ver2-admin-css', plugins_url('/css/m2m-quotes-ver2.css', __FILE__));
+    wp_enqueue_script('m2m-quotes-ver2-admin-js', plugins_url('/js/m2m-quotes-ver2.js', __FILE__), array('jquery'), null, true);
+}
+add_action('admin_enqueue_scripts', 'm2m_quotes_ver2_admin_assets');
 
 // Register Settings
 function m2m_quotes_ver2_register_settings() {
@@ -197,3 +235,76 @@ function m2m_quotes_ver2_performance_meta_box_callback($post) {
     echo '<p><strong>Dislikes:</strong> ' . esc_html($dislikes) . '</p>';
 }
 
+function m2m_quotes_ver2_display_quote_performance() {
+    $quotes = new WP_Query(array('post_type' => 'm2m_quotes', 'posts_per_page' => -1));
+    echo '<h3>Quote Performance</h3>';
+    echo '<table class="widefat fixed" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Quote</th>
+                    <th>Likes</th>
+                    <th>Dislikes</th>
+                </tr>
+            </thead>
+            <tbody>';
+    if ($quotes->have_posts()) {
+        while ($quotes->have_posts()) {
+            $quotes->the_post();
+            $likes = get_post_meta(get_the_ID(), '_m2m_quote_likes', true) ?: 0;
+            $dislikes = get_post_meta(get_the_ID(), '_m2m_quote_dislikes', true) ?: 0;
+            echo '<tr>';
+            echo '<td>' . get_the_content() . '</td>';
+            echo '<td>' . $likes . '</td>';
+            echo '<td>' . $dislikes . '</td>';
+            echo '</tr>';
+        }
+    }
+    wp_reset_postdata();
+    echo '</tbody></table>';
+}
+
+// Register option for quote switching interval
+function m2m_quotes_ver2_register_interval_setting() {
+    register_setting('m2m_quotes_ver2_settings_group', 'm2m_quote_switch_interval');
+}
+add_action('admin_init', 'm2m_quotes_ver2_register_interval_setting');
+
+function m2m_quotes_ver2_display_settings() {
+    $interval = get_option('m2m_quote_switch_interval', 24);
+    echo '<h3>Quote Switching Interval</h3>';
+    echo '<form method="post" action="options.php">';
+    settings_fields('m2m_quotes_ver2_settings_group');
+    echo '<p><label for="m2m_quote_switch_interval">Switch interval (hours):</label> ';
+    echo '<input type="number" id="m2m_quote_switch_interval" name="m2m_quote_switch_interval" value="' . esc_attr($interval) . '" min="1" max="168" /></p>';
+    submit_button('Save Interval');
+    echo '</form>';
+}
+
+// Register settings for customizable button URLs
+function m2m_quotes_ver2_register_button_urls() {
+    register_setting('m2m_quotes_ver2_buttons_group', 'm2m_button_url_1');
+    register_setting('m2m_quotes_ver2_buttons_group', 'm2m_button_url_2');
+    register_setting('m2m_quotes_ver2_buttons_group', 'm2m_button_url_3');
+    register_setting('m2m_quotes_ver2_buttons_group', 'm2m_button_url_4');
+}
+add_action('admin_init', 'm2m_quotes_ver2_register_button_urls');
+
+function m2m_quotes_ver2_display_button_urls() {
+    echo '<h3>Button URLs</h3>';
+    echo '<form method="post" action="options.php">';
+    settings_fields('m2m_quotes_ver2_buttons_group');
+    for ($i = 1; $i <= 4; $i++) {
+        $url = get_option("m2m_button_url_$i", '');
+        echo "<p><label for=\"m2m_button_url_$i\">Button $i URL:</label> ";
+        echo "<input type=\"url\" id=\"m2m_button_url_$i\" name=\"m2m_button_url_$i\" value=\"" . esc_attr($url) . "\" /></p>";
+    }
+    submit_button('Save Button URLs');
+    echo '</form>';
+}
+
+for ($i = 1; $i <= 4; $i++) {
+    $button_url = get_option("m2m_button_url_$i", '#');
+    if ($button_url) {
+        echo "<a href=\"" . esc_url($button_url) . "\" target=\"_blank\" class=\"custom-button\">Button $i</a>";
+    }
+}
