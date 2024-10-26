@@ -1,0 +1,115 @@
+/* General styling for the quote container */
+.m2m-quote {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Quote text styling */
+.m2m-quote p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+/* Author and role styling */
+.m2m-quote strong {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Like and dislike button container */
+.m2m-votes {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.m2m-like-btn, .m2m-dislike-btn {
+    padding: 8px 16px;
+    background-color: #f6a48e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.m2m-like-btn:hover {
+    background-color: #e3937a;
+}
+
+.m2m-dislike-btn:hover {
+    background-color: #e3937a;
+}
+
+/* Share button container */
+.m2m-share-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.m2m-share-buttons a, .m2m-copy-link {
+    padding: 6px 12px;
+    background-color: #0073e6;
+    border-radius: 4px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.m2m-share-buttons a:hover, .m2m-copy-link:hover {
+    background-color: #005bb5;
+}
+
+/* Copy link button */
+.m2m-copy-link {
+    cursor: pointer;
+}
+
+/* Admin page styles */
+.wrap h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.wrap form {
+    max-width: 700px;
+    margin-top: 20px;
+}
+
+.wrap form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wrap form label {
+    font-size: 14px;
+    color: #333;
+}
+
+.wrap form .button-primary {
+    background-color: #0073e6;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wrap form .button-primary:hover {
+    background-color: #005bb5;
+}
