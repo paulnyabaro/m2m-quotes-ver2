@@ -23,4 +23,14 @@ jQuery(document).ready(function($) {
         navigator.clipboard.writeText(copyText);
         alert('Link copied to clipboard!');
     });
+
+    $('.nav-tab').click(function() {
+        var tab_id = $(this).data('tab');
+        $('.nav-tab').removeClass('nav-tab-active');
+        $(this).addClass('nav-tab-active');
+        $('.tab-content').hide();
+        $('#tab-' + tab_id).show();
+    });
 });
+
+
